@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coder's reference — Codebook v0.5.3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F7F4; --card:#FFFFFF; --ink:#16202B; --ink-2:#4A5866; --ink-3:#7E8A95;
+  --rule:#DCDED7; --rule-2:#C3C7BE;
+  --signal:#0F6E56; --signal-bg:#E4F0EB;
+  --warn:#8A5A2B; --warn-bg:#F6EEE3;
+  --stop:#8C2F2F; --stop-bg:#F7E9E9;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto} *{transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased}
+.wrap{display:grid;grid-template-columns:212px minmax(0,1fr);gap:40px;max-width:1120px;margin:0 auto;padding:0 28px}
+nav{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:34px 0 40px;border-right:1px solid var(--rule)}
+nav h1{font-family:"IBM Plex Serif",Georgia,serif;font-size:17px;font-weight:500;margin:0 0 2px;line-height:1.3}
+nav .ver{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-3);letter-spacing:.02em;margin-bottom:22px}
+nav a{display:block;text-decoration:none;color:var(--ink-2);font-size:13px;padding:5px 0;border-left:2px solid transparent;padding-left:12px;margin-left:-14px}
+nav a:hover,nav a:focus-visible{color:var(--ink);border-left-color:var(--signal)}
+nav .num{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-3);margin-right:7px}
+main{padding:34px 0 96px;min-width:0}
+.filter{position:sticky;top:0;z-index:5;background:var(--paper);padding:6px 0 14px;margin-bottom:8px}
+.filter input{width:100%;padding:10px 13px;font:400 14px "IBM Plex Sans",sans-serif;color:var(--ink);
+  background:var(--card);border:1px solid var(--rule-2);border-radius:3px}
+.filter input:focus{outline:2px solid var(--signal);outline-offset:1px;border-color:transparent}
+.filter p{margin:7px 0 0;font-size:12px;color:var(--ink-3)}
+section{margin-bottom:52px;scroll-margin-top:70px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
+h2{font-family:"IBM Plex Serif",Georgia,serif;font-size:23px;font-weight:500;margin:0 0 6px;line-height:1.25}
+h2 + .lede{margin:0 0 20px;color:var(--ink-2);font-size:14.5px;max-width:62ch}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:17px 19px;margin-bottom:11px}
+.card h3{font-size:14.5px;font-weight:600;margin:0 0 6px}
+.card p{margin:0 0 8px;font-size:14px;color:var(--ink-2)}
+.card p:last-child{margin-bottom:0}
+.card ul{margin:0;padding-left:17px;font-size:14px;color:var(--ink-2)}
+.card li{margin-bottom:4px}
+.tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:1px 6px;border-radius:2px;
+  background:var(--signal-bg);color:var(--signal);margin-right:5px;vertical-align:1px}
+.tag.w{background:var(--warn-bg);color:var(--warn)}
+.tag.s{background:var(--stop-bg);color:var(--stop)}
+code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:#EEF0EA;padding:1px 4px;border-radius:2px;color:var(--ink)}
+.step{display:grid;grid-template-columns:26px minmax(0,1fr);gap:14px;margin-bottom:11px}
+.stepnum{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3);padding-top:18px;text-align:right}
+.exit{border-left:3px solid var(--rule-2);padding:9px 0 9px 14px;margin:9px 0}
+.exit.go{border-left-color:var(--signal)} .exit.log{border-left-color:var(--warn)} .exit.skip{border-left-color:var(--stop)}
+.exit b{font-size:13.5px;display:block;margin-bottom:2px}
+.exit span{font-size:13.5px;color:var(--ink-2)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-weight:600;font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-3);padding:0 10px 7px 0;border-bottom:1px solid var(--rule)}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+td:first-child{color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:12.5px;width:33%}
+.vals{display:flex;flex-wrap:wrap;gap:4px}
+.v{font-family:"IBM Plex Mono",monospace;font-size:11.5px;padding:2px 7px;border:1px solid var(--rule-2);border-radius:2px;background:var(--paper)}
+.v.na{border-style:dashed;color:var(--ink-3)}
+.hide{display:none}
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:11px}
+.tier{background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:15px 17px}
+.tier.decide{border-color:var(--signal);border-width:1.5px}
+.tier .n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-3);margin-bottom:4px}
+.tier h3{font-size:14px;margin:0 0 5px}
+.tier p{font-size:13px;color:var(--ink-2);margin:0}
+.empty{display:none;font-size:14px;color:var(--ink-3);padding:14px 0}
+@media (max-width:820px){
+  .wrap{grid-template-columns:1fr;gap:0;padding:0 18px}
+  nav{position:static;height:auto;border-right:none;border-bottom:1px solid var(--rule);padding-bottom:16px}
+  nav a{display:inline-block;margin:0 12px 0 0;padding-left:0;border-left:none;border-bottom:2px solid transparent}
+}
+@media print{
+  nav,.filter{display:none} .wrap{display:block;max-width:none} body{background:#fff;font-size:11pt}
+  section{page-break-inside:avoid;margin-bottom:24px} .card{border-color:#bbb}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <h1>Coder's reference</h1>
+  <div class="ver">codebook v0.5.3</div>
+  <a href="#how"><span class="num">→</span>How to work</a>
+  <a href="#start"><span class="num">00</span>Before you start</a>
+  <a href="#scope"><span class="num">01</span>Is it in scope</a>
+  <a href="#extract"><span class="num">02</span>Is it a claim</a>
+  <a href="#bounds"><span class="num">03</span>Where it begins and ends</a>
+  <a href="#tiers"><span class="num">04</span>Which fields to fill</a>
+  <a href="#values"><span class="num">05</span>Value vocabularies</a>
+  <a href="#absence"><span class="num">06</span>Recording absence</a>
+  <a href="#special"><span class="num">07</span>Special cases</a>
+  <a href="#tokens"><span class="num">08</span>Notes and tokens</a>
+</nav>
+
+<main>
+<div class="filter">
+  <label for="q" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Filter the reference</label>
+  <input id="q" type="search" placeholder="Filter — try not_applicable, threshold, bio, dedup">
+  <p id="qhint">Type to hide everything that doesn't match. Escape clears.</p>
+</div>
+
+<section id="how">
+  <div class="eyebrow">Start here</div>
+  <h2>How to work</h2>
+  <p class="lede">Three passes over the document, not one. Doing extraction, routing, and filling together for each sentence means reloading every rule fifty times over. Split them and each rule gets loaded once.</p>
+
+  <div class="card">
+    <h3>Pass 1 — extraction only</h3>
+    <p>Spreadsheet closed. Read the document end to end, then go back and highlight. Three questions per passage, in this order:</p>
+    <div class="exit"><b>What is this passage about?</b><span>Name the family. Or: framework-wide infrastructure. Or: a non-CBRN hazard only. <em>If infrastructure</em> — does the document say it switches on at a stated line, or is it always on? Always-on is out.</span></div>
+    <div class="exit"><b>Is there something here that either happened or didn't?</b><span>Not "is it true" and not "is it arguable" — is there a fact of the matter. "We take safety seriously" has nothing to check. "We evaluate for biological uplift before release" either happens or it doesn't.</span></div>
+    <div class="exit"><b>Have I already highlighted this same assertion?</b><span>Core gates restate three to five times. Mark it as a locator on the first one.</span></div>
+    <div class="exit"><b>Is the only content a read-off document property?</b><span>A named multilateral commitment, a version property, an evaluator access term. Mark it for the Document facts sheet. Publication commitments are claims — they stay in the claim list.</span></div>
+    <p style="margin-top:10px">Output: highlighted passages with a family written in the margin. Nothing typed into the sheet yet.</p>
+    <p><span class="tag w">watch</span>Compare extraction lists with your co-coder <em>now</em>, before Pass 2. Filling fields for records that shouldn't exist is the most expensive mistake available.</p>
+  </div>
+
+  <div class="card">
+    <h3>Pass 2 — routing</h3>
+    <p>For each highlighted passage, one question: <b>which group does this fill?</b> Usually one, sometimes two. If two, ask whether the fields diverge — different claim type, hazard, decision point, or backing means it is a split, so two records.</p>
+    <p>Output: a numbered list of record id, locator, and group name. Still almost no typing.</p>
+  </div>
+
+  <div class="card">
+    <h3>Pass 3 — filling, column-wise</h3>
+    <p>Set the 18 document-level fields once and paste them down every row. Fill the 5 always-coded fields. Then work <b>one group at a time across all claims</b> — every hazard claim together holding Rule 1 in mind, then every threshold claim together holding Rules 3 and 3a, and so on.</p>
+    <p>This is where the time goes if you do it row by row. Column-wise, you hold one rule and apply it eight times instead of holding ten rules and applying each once.</p>
+    <p>Then the Document facts row for this framework: the 4 access-term fields, plus <code>evidenced_by</code>, <code>evidence_locator</code> and <code>evidence_verbatim</code> from whatever you marked in Pass 1.</p><p>Last: Rule 6 over every remaining blank.</p>
+  </div>
+
+  <div class="card">
+    <h3>The rules are not a sequence</h3>
+    <p>Ten rules, but no claim meets more than four or five. Rule 0 is a gate applied to every passage. Three rules apply to every record. The rest hang off a single group and fire only if a claim routes into it.</p>
+    <table>
+      <tr><td>Rule 0</td><td>Every passage. Scope, then falsifiable, then does a field fit.</td></tr>
+      <tr><td>Rules 5, 6, 7</td><td>Every record. Claim type if signatory; absence; dual frameworks.</td></tr>
+      <tr><td>Rule 1</td><td>Only if you routed to the hazard group.</td></tr>
+      <tr><td>Rules 3, 3a</td><td>Only if you routed to the threshold group.</td></tr>
+      <tr><td>Rule 8</td><td>Only if you routed to external input or third party.</td></tr>
+      <tr><td>Rule 4</td><td>Not part of coding a claim at all — the Tier A checklist, filled from finished records.</td></tr>
+    </table>
+    <p style="margin-top:10px"><span class="tag w">watch</span>Rule 3 is a <em>filling instruction for the threshold group</em>, not part of the claim test. A claim that routes to decision point never meets it. Decision point, accountability, override route, and evaluation have no extra rule at all.</p>
+  </div>
+</section>
+
+<section id="start">
+  <div class="eyebrow">00</div>
+  <h2>Before you start a document</h2>
+  <p class="lede">Eighteen fields describe the document, not any claim in it. Set them once, paste them down every row, and never think about them again.</p>
+  <div class="card">
+    <h3>Document-level fields — set once</h3>
+    <p><code>company</code> · <code>source.framework_role</code> · <code>source.framework_name</code> · <code>source.instruments_named</code> · <code>source.commitments_named</code> · <code>source.companion_document</code> · <code>source_url</code> · <code>source_version</code> · <code>source_publication_date</code> · <code>access_date</code> · all five <code>version.*</code> fields · all three <code>applicability.*</code> fields</p>
+    <p><span class="tag w">watch</span>The <code>version.*</code> fields record whether the document <em>has</em> a changelog, version number, date, and rationale. A claim promising future updates does not populate them — that claim codes <code>decision_point = framework_revision</code>.</p><p><span class="tag">also</span>Four further fields are document properties and live only on the Document facts sheet, never on a claim row: the Measure 3.5 access terms (<code>qualification_criteria_published</code>, <code>non_retaliation_commitment</code>, <code>disclosure_delay_cap</code>, <code>fewest_mitigations_version_access</code>). No claim in any coded framework asserts them, which is why recording them per framework is what makes their absence a supported finding. Cite evidencing record ids in <code>evidenced_by</code> or state that none exist, with the passage in <code>evidence_locator</code> and <code>evidence_verbatim</code>.</p>
+  </div>
+  <div class="card">
+    <h3>Then read the whole document once, before extracting</h3>
+    <p>Most of what you read will not become a record. Front matter typically yields nothing. Several pages without an extraction is normal, not under-coding.</p>
+  </div>
+</section>
+
+<section id="scope">
+  <div class="eyebrow">01 · Rule 0, step 1</div>
+  <h2>Is this passage in scope</h2>
+  <p class="lede">Scope is decided by commitment family, not by topic relevance. Ask what the passage is about before asking whether it is a claim.</p>
+  <div class="card">
+    <h3>In scope — these nine families, and where each one codes</h3>
+    <p>Families are the vocabulary of the scope test: what a passage is <em>about</em>. Conditional groups are the vocabulary of field routing: what you fill in. Eight families map straight onto a group. One does not — see the last row.</p>
+    <table>
+      <tr><td>Hazard definitions and coverage</td><td><code>hazard.*</code></td></tr>
+      <tr><td>Capability thresholds and triggered responses</td><td><code>threshold.*</code></td></tr>
+      <tr><td>Development and deployment decision points</td><td><code>decision_point</code></td></tr>
+      <tr><td>Governance backing for risk decisions</td><td><code>backing_mechanism.*</code> · <code>separation_of_duties</code></td></tr>
+      <tr><td>Third-party evaluation access</td><td><code>third_party.*</code></td></tr>
+      <tr><td>Evaluation reporting</td><td><code>evaluation.*</code></td></tr>
+      <tr><td>External input into risk decisions</td><td><code>external_basis</code></td></tr>
+      <tr><td>Override and waiver routes</td><td><code>override_waiver_route</code></td></tr>
+      <tr><td>Framework versioning and revision</td><td><code>decision_point = framework_revision</code><br><span style="font-size:12.5px">No group of its own. The five <code>version.*</code> fields are document-level and are never populated from a claim.</span></td></tr>
+    </table>
+    <p style="margin-top:10px"><span class="tag w">watch</span>A claim promising future updates is in scope and is a claim. It codes <code>decision_point = framework_revision</code> — looking for a <code>version.*</code> field to fill is the wrong turn.</p>
+  </div>
+  <div class="card">
+    <h3>Out of scope — framework-wide infrastructure</h3>
+    <p>Security posture, incident response operations, legal and compliance machinery. Out <em>even where they apply to CBRN risks</em>: a measure that applies identically to every hazard carries no signal about whether biological risk is treated differently, which is the research question.</p>
+    <p><span class="tag">exception</span><b>Always-on or switched-on?</b> Ask what the document says, not why the measure exists. Every security control exists because risks exist — that is motivation, not a trigger. Weight encryption applies to every model all the time: always-on, out of scope. "We will require the following practices for High capability models" switches on at a stated line: in scope.</p>
+    <p>If the line is new, make a threshold record with the measures as its response. If the line is already a coded record, append the locator to that record — do not create a second one.</p>
+    <p><span class="tag w">watch</span>The line does not have to name a hazard. "High capability models" is a capability level and it counts. What does not count is the ambient fact that risks exist.</p>
+  </div>
+  <div class="card">
+    <h3>Hazard universe</h3>
+    <p>In scope where the claim concerns C, B, R, or N content, or applies across all tracked categories. A claim scoped only to a non-CBRN hazard — cyber-only, self-improvement-only — is out.</p>
+    <p><span class="tag">in</span>A non-CBRN threshold that cites CBRN as a downstream consequence stays in. Note the indirect framing.</p>
+  </div>
+</section>
+
+<section id="extract">
+  <div class="eyebrow">02 · Rule 0, step 2</div>
+  <h2>Is this passage a claim</h2>
+  <p class="lede">Both conditions must hold. Then every passage takes exactly one of three exits.</p>
+  <div class="step"><div class="stepnum">a</div><div class="card" style="margin:0">
+    <h3>Is there something that either happened or didn't?</h3>
+    <p>Not "is it true", and not "could it be argued". You are never assessing whether the company is being honest — only whether the sentence points at something determinate. It names an action, condition, threshold, actor, process, or trigger.</p>
+    <p><span class="tag s">no</span>Mission statements, undefined commitments to abstractions, recital-style framing, definitions without an attached obligation.</p>
+    <p><span class="tag w">watch</span>This test asks about the whole passage. It is not the same as asking whether a condition clause is specific enough to be a threshold — that is Rule 3, and it only comes up if you route to the threshold group. A claim can pass this test and have no threshold at all.</p>
+  </div></div>
+  <div class="step"><div class="stepnum">b</div><div class="card" style="margin:0">
+    <h3>Field mapping</h3>
+    <p>Can you populate at least one conditional field from it — hazard, threshold, decision point, backing mechanism, third-party access, evaluation reporting, versioning, external basis, override route?</p>
+  </div></div>
+  <div class="card">
+    <h3>Disposition — exactly one exit</h3>
+    <div class="exit skip"><b>Out of scope</b><span>Skip. Do not log.</span></div>
+    <div class="exit log"><b>In scope, but no field fits</b><span>Log in the field-gap log. Do not force a fit.</span></div>
+    <div class="exit go"><b>In scope and a field fits</b><span>Make a record.</span></div>
+    <div class="exit"><b>In scope, but the only content is a read-off document property</b><span>Not a claim record. Record it, its locator and its verbatim on the Document facts sheet. This covers named multilateral commitments, version properties, and evaluator access terms — things no claim asserts. It does <em>not</em> cover publication commitments.</span></div>
+    <p style="margin-top:10px"><span class="tag w">watch</span>Never reason about what a passage might imply in order to rescue it into a field. The scope test and the fields do the filtering — that is the safeguard against pulling text toward a preferred conclusion.</p><p><span class="tag">note</span>Publication commitments are claims, not document properties. "We will publish public summaries of these assessments" is a Measure 10.2 commitment — it codes in the evaluation group with a claim type and its hedges intact (e.g. "standalone reports <em>or</em> system cards"). Only things no claim asserts go to Document facts.</p>
+  </div>
+</section>
+
+<section id="bounds">
+  <div class="eyebrow">03 · Rule 0</div>
+  <h2>Where a claim begins and ends</h2>
+  <p class="lede">The unit is one assertion, not one sentence.</p>
+  <div class="card">
+    <h3>Split when fields diverge</h3>
+    <p>Different hazard, claim type, decision point, or backing mechanism in the same passage means two records. That divergence is the tell.</p>
+  </div>
+  <div class="card">
+    <h3>Merge across sentences when the assertion requires it</h3>
+    <p>A threshold definition and its triggered response belong together. But never merge across sections — a section is any headed division as published; where there are no headings, treat page breaks as boundaries.</p>
+  </div>
+  <div class="card">
+    <h3>Deduplicate within a document</h3>
+    <p>A later passage restating an already-coded claim, with no field value changing, is <em>not</em> a new record. Append its locator to the existing record and code the most complete statement as canonical. If any field value would differ, it is a new record.</p>
+    <p><span class="tag w">watch</span>This is the single biggest source of inflated record counts. Core gates often restate three to five times in one framework.</p>
+  </div>
+  <div class="card">
+    <h3>Keep verbatim tight but self-contained</h3>
+    <p>If a reader cannot tell what the claim is without the preceding sentence, include it. Section references live in <code>source_locator</code>, never inside <code>claim_text_verbatim</code>.</p>
+  </div>
+</section>
+
+<section id="tiers">
+  <div class="eyebrow">04</div>
+  <h2>Which fields to fill</h2>
+  <p class="lede">Fifty fields, three tiers. Only the third asks anything of you.</p>
+  <div class="tiers">
+    <div class="tier"><div class="n">tier 1 · 18 fields</div><h3>Document-level</h3><p>Set once per document, copied to every row. No per-claim decision. A further four live only on the Document facts sheet.</p></div>
+    <div class="tier"><div class="n">tier 2 · 5 fields</div><h3>Always coded</h3><p><code>record_id</code>, <code>claim_text_verbatim</code>, <code>claim_type</code>, <code>source_locator</code>, <code>coder_notes</code>.</p></div>
+    <div class="tier decide"><div class="n">tier 3 · 23 fields</div><h3>Conditional</h3><p>Ask one question: what is this claim about? Populate that group, and put <code>not_applicable</code> in every group you did not route to.</p></div>
+  </div>
+  <div class="card" style="margin-top:11px">
+    <h3>The eight conditional groups</h3>
+    <table>
+      <tr><td>hazard</td><td>The claim names or defines a hazard, or describes what a model could enable.</td></tr>
+      <tr><td>threshold</td><td>The claim states a capability level or condition the company monitors.</td></tr>
+      <tr><td>decision_point</td><td>The claim says what happens to a model — or to the framework itself. Revision commitments land here as <code>framework_revision</code>; there is no separate versioning group.</td></tr>
+      <tr><td>backing_mechanism + separation_of_duties</td><td>The claim names who oversees, owns, supports, or assures a risk decision.</td></tr>
+      <tr><td>override_waiver_route</td><td>The claim states whether commitments can be adjusted downward.</td></tr>
+      <tr><td>external_basis</td><td>Outside actors provide input directed at a decision object.</td></tr>
+      <tr><td>third_party.*</td><td>The claim concerns evaluation of the model by outsiders. <code>external_evals</code> and <code>named_evaluators</code> only — the four Measure 3.5 access terms live on the Document facts sheet.</td></tr>
+      <tr><td>evaluation.*</td><td>The claim states when a model is re-evaluated, or commits to publishing results (Measure 10.2).</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Worked example</h3>
+    <p style="font-family:'IBM Plex Serif',Georgia,serif;font-size:15px;color:var(--ink)">"We expect our approach will continue to evolve, and we will update this FGF as our processes and regulatory requirements change."</p>
+    <p>Document-level: already set. Always-coded: yes. What is it about? Framework revision — so <code>decision_point = framework_revision</code>, and nothing else in tier 3. Not versioning (those fields describe the document). Not <code>instruments_named</code> despite "regulatory requirements" (document-level, already recorded). One conditional field.</p>
+  </div>
+</section>
+
+<section id="values">
+  <div class="eyebrow">05</div>
+  <h2>Value vocabularies</h2>
+  <p class="lede">Type values exactly as written. In multi-select fields, separate values with a semicolon and a space — never a line break.</p>
+  <div class="card">
+    <h3>Claim and hazard</h3>
+    <table>
+      <tr><td>claim_type</td><td><div class="vals"><span class="v">binding_internal_policy</span><span class="v">collective_pledge</span><span class="v">legal_obligation</span><span class="v">current_practice</span><span class="v">stated_aspiration</span><span class="v">statement_of_concern</span></div></td></tr>
+      <tr><td>hazard.hazards_enumerated</td><td><div class="vals"><span class="v">C</span><span class="v">B</span><span class="v">R</span><span class="v">N</span><span class="v">undifferentiated_CBRN</span><span class="v na">not_hazard_specific</span></div></td></tr>
+      <tr><td>hazard.bio_specific_substance</td><td><div class="vals"><span class="v">yes</span><span class="v">partial</span><span class="v">no</span><span class="v na">not_applicable</span></div></td></tr>
+      <tr><td>hazard.lifecycle_stages_addressed</td><td><div class="vals"><span class="v">design</span><span class="v">development</span><span class="v">acquisition</span><span class="v">release</span><span class="v">distribution</span><span class="v">use</span><span class="v na">not_applicable</span></div></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Threshold and decision</h3>
+    <table>
+      <tr><td>threshold.present</td><td><div class="vals"><span class="v">yes</span><span class="v">no</span></div></td></tr>
+      <tr><td>threshold.response_linked</td><td><div class="vals"><span class="v">yes</span><span class="v">no</span><span class="v na">not_applicable</span></div></td></tr>
+      <tr><td>threshold.trigger_type</td><td><div class="vals"><span class="v">capability</span><span class="v">risk_condition</span><span class="v">compliance</span><span class="v">temporal</span><span class="v na">not_applicable</span></div></td></tr>
+      <tr><td>decision_point</td><td><div class="vals"><span class="v">halt_development</span><span class="v">withhold_or_restrict_market</span><span class="v">restrict_use</span><span class="v">impose_controls</span><span class="v">framework_revision</span><span class="v na">not_applicable</span></div></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Accountability</h3>
+    <table>
+      <tr><td>backing_mechanism.oversight<br>ownership<br>support_and_monitoring<br>assurance</td><td><div class="vals"><span class="v">supervisory_body_or_independent</span><span class="v">executive_management_body</span><span class="v">operational_teams</span><span class="v">internal_assurance</span><span class="v">external_assurance</span><span class="v na">not_publicly_specified</span></div></td></tr>
+      <tr><td>separation_of_duties</td><td><div class="vals"><span class="v">separated</span><span class="v">not_separated</span><span class="v na">not_publicly_specified</span></div></td></tr>
+      <tr><td>override_waiver_route</td><td><div class="vals"><span class="v">named_route</span><span class="v">no_route_stated</span><span class="v na">not_publicly_specified</span></div></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>External scrutiny</h3>
+    <table>
+      <tr><td>external_basis</td><td><div class="vals"><span class="v">government_input_process_specified</span><span class="v">other_external_input_specified</span><span class="v">none_stated</span><span class="v na">not_publicly_specified</span></div></td></tr>
+      <tr><td>third_party.external_evals</td><td><div class="vals"><span class="v">required</span><span class="v">optional</span><span class="v">none</span><span class="v na">not_publicly_specified</span></div></td></tr>
+      <tr><td>third_party.named_evaluators</td><td><div class="vals"><span class="v">free text list</span><span class="v na">not_applicable</span></div></td></tr>
+      <tr><td>evaluation.results_published<br>model_card_reported</td><td><div class="vals"><span class="v">yes</span><span class="v">no</span><span class="v na">not_publicly_specified</span><span class="v na">not_applicable</span></div></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Evaluation, version, applicability</h3>
+    <table>
+      <tr><td>evaluation.reevaluation_trigger_stated</td><td><div class="vals"><span class="v">periodic</span><span class="v">capability_change</span><span class="v">deployment_change</span><span class="v">incident</span><span class="v">none_stated</span><span class="v na">not_publicly_specified</span><span class="v na">not_applicable</span></div></td></tr>
+      <tr><td>version.changelog_present<br>version_number_present<br>date_present<br>rationale_given</td><td><div class="vals"><span class="v">yes</span><span class="v">no</span></div></td></tr>
+      <tr><td>version.ratchet_direction</td><td><div class="vals"><span class="v">tightening_only</span><span class="v">bidirectional</span><span class="v na">unspecified</span></div></td></tr>
+      <tr><td>applicability.cop_signatory<br>seoul_signatory</td><td><div class="vals"><span class="v">yes</span><span class="v">no</span><span class="v na">unclear</span></div></td></tr>
+      <tr><td>applicability.systemic_risk_scope</td><td><div class="vals"><span class="v">in_scope</span><span class="v">out_of_scope</span><span class="v na">unclear</span></div></td></tr>
+      <tr><td>source.framework_role</td><td><div class="vals"><span class="v">regulatory_referenced</span><span class="v">voluntary_internal</span><span class="v">single_framework</span><span class="v na">unclear</span></div></td></tr>
+      <tr><td>source.instruments_named</td><td><div class="vals"><span class="v">EU_AI_Act_CoP</span><span class="v">CA_SB53</span><span class="v">other</span><span class="v na">none_named</span></div></td></tr>
+      <tr><td>source.commitments_named</td><td><div class="vals"><span class="v">seoul_frontier_ai_safety_commitments</span><span class="v">other</span><span class="v na">none_named</span></div></td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="absence">
+  <div class="eyebrow">06 · Rule 6</div>
+  <h2>Recording absence</h2>
+  <p class="lede">Absence handling is where the dataset's credibility lives. Blank never means "nothing here" — blank means not yet coded.</p>
+  <div class="card">
+    <h3>Three kinds of absence, never collapsed</h3>
+    <div class="exit"><b>Affirmative negation</b><span>The document states the thing does not exist or is not permitted → <code>none_stated</code>, <code>no_route_stated</code>.</span></div>
+    <div class="exit"><b>Silence</b><span>The document does not address it → <code>not_publicly_specified</code>.</span></div>
+    <div class="exit"><b>Out of scope</b><span>The obligation does not apply → <code>out_of_scope</code>.</span></div>
+  </div>
+  <div class="card">
+    <h3>Not absence codes</h3>
+    <p><code>not_applicable</code> and <code>not_hazard_specific</code> are <em>scope</em> values: the claim does not route to that group. Every conditional group you did not route to takes <code>not_applicable</code> — blank means only one thing, not yet coded. Absence <em>within</em> a group you did route to still follows the three-way taxonomy above.</p>
+    <p><code>unclear</code> belongs only to the applicability fields, where public information is insufficient to determine status.</p>
+    <p><code>unspecified</code> appears only in <code>version.ratchet_direction</code>, where it follows the borrowed Safety Framework Cards vocabulary.</p>
+  </div>
+</section>
+
+<section id="special">
+  <div class="eyebrow">07</div>
+  <h2>Special cases</h2>
+  <p class="lede">The rules that fire less often but change the code when they do.</p>
+  <div class="card">
+    <h3>Substitution test — Rule 1</h3>
+    <p>Swap "biological" for "chemical". If the sentence stays coherent and equally applicable, the treatment is generic. If it breaks, it is bio-specific.</p>
+    <p><span class="tag">yes</span>pathogen enhancement, de novo synthesis, CDC Class A agent, pandemic preparedness, nucleic acid screening</p>
+    <p><span class="tag s">no</span>"evaluate uplift for CBRN weapons", "harmlessness training and output monitoring", "biological or chemical threats"</p>
+  </div>
+  <div class="card">
+    <h3>Signatory asymmetry — Rule 5</h3>
+    <p>The Code's glossary defines <em>appropriate</em>, <em>best practice</em>, and <em>state of the art</em>. For a signatory these carry defined content, so "appropriate mitigations" codes <code>binding_internal_policy</code> rather than a hedge. For a non-signatory the same words stay <code>stated_aspiration</code>.</p>
+    <p><span class="tag w">watch</span>Only those three glossary terms convert. Ordinary hedging — "may", "as available", "where feasible" — stays hedged for signatories too.</p>
+  </div>
+  <div class="card">
+    <h3>Dual frameworks — Rule 7</h3>
+    <p>Some companies publish two frameworks: one written against legal obligations, one voluntary. Code every claim with <code>source.framework_role</code>. Never average or merge across them.</p>
+    <p>Identical text in both is coded twice — the unit is claim-in-document — and linked with <code>XDOC-DUP</code>. Field values may legitimately differ between the twins; that divergence is a finding, not an error.</p>
+    <p>A research or methodology preprint is not a second framework.</p>
+  </div>
+  <div class="card">
+    <h3>Routing external engagement — Rule 8</h3>
+    <table>
+      <tr><td>external_basis</td><td>Inbound, and directed at a decision object: thresholds, evaluations, risk acceptance, deployment, framework revision.</td></tr>
+      <tr><td>third_party.*</td><td>Evaluation of the model, or access for evaluation.</td></tr>
+      <tr><td>skip</td><td>Outbound sharing, general fora membership, bug bounties, vulnerability disclosure, threat sharing — security-ecosystem engagement is infrastructure.</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Thresholds — Rules 3 and 3a</h3>
+    <p>A threshold is any stated capability level or condition presented as a line the company monitors. A response is not required for the record to exist — the link is coded in <code>threshold.response_linked</code>.</p>
+    <p>Tier tables whose responses live in another section are the paradigm <code>response_linked = no</code> case. Cross-reference by record id; never merge across sections.</p>
+    <p><span class="tag w">watch</span>Re-evaluation commitments are not thresholds. They state no monitored capability line — code them in <code>evaluation.reevaluation_trigger_stated</code> only.</p>
+  </div>
+  <div class="card">
+    <h3>Bio-engagement checklist — Rule 4</h3>
+    <p>Tier A only, recorded in the checklist sheet, present or absent with no adequacy judgment. Each <em>yes</em> must cite the record id evidencing it; a yes with no citable record is not a yes.</p>
+    <ul>
+      <li>Distinguishes informational uplift from end-to-end operational capability</li>
+      <li>Addresses tacit knowledge or protocol troubleshooting</li>
+      <li>References acquisition chokepoints</li>
+      <li>Specifies an actor model (novice vs trained)</li>
+      <li>Treats biological design tools separately from language models</li>
+      <li>Names agent or pathway classes rather than generic "bioweapons"</li>
+    </ul>
+  </div>
+</section>
+
+<section id="tokens">
+  <div class="eyebrow">08</div>
+  <h2>Notes and tokens</h2>
+  <p class="lede">Three controlled tokens in <code>coder_notes</code>, so the notes column stays searchable.</p>
+  <div class="card">
+    <table>
+      <tr><td>CALIBRATION</td><td>A contestable call. Flag it, code your best judgment, and move on — these are the comparison set for the calibration meeting, not problems to resolve alone.</td></tr>
+      <tr><td>RULE5-ASYM</td><td>Signatory status changed the code on this record.</td></tr>
+      <tr><td>XDOC-DUP: id</td><td>The same or near-identical text appears in the companion framework at that record.</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>The standing reminder</h3>
+    <p style="font-family:'IBM Plex Serif',Georgia,serif;font-size:15.5px;color:var(--ink)">Record whether a framework addresses what a commitment asks about. Never whether the provider complies. Compliance is not determinable from public documents.</p>
+  </div>
+  <div class="card">
+    <h3>What this dataset can see</h3>
+    <p>Most of the Code requires reporting to the AI Office, not publicly. Only Measure 10.2 requires published summarised Frameworks and Model Reports. This dataset codes the public layer only.</p>
+  </div>
+</section>
+
+<p class="empty" id="empty">Nothing matches that filter.</p>
+</main>
+</div>
+
+<script>
+(function(){
+  var q=document.getElementById('q'),hint=document.getElementById('qhint'),empty=document.getElementById('empty');
+  var cards=[].slice.call(document.querySelectorAll('.card,.tier')),sections=[].slice.call(document.querySelectorAll('section'));
+  function run(){
+    var t=q.value.trim().toLowerCase();
+    if(!t){cards.forEach(function(c){c.classList.remove('hide')});sections.forEach(function(s){s.classList.remove('hide')});
+      empty.style.display='none';hint.textContent='Type to hide everything that doesn\u2019t match. Escape clears.';return;}
+    var n=0;
+    cards.forEach(function(c){var m=c.textContent.toLowerCase().indexOf(t)>-1;c.classList.toggle('hide',!m);if(m)n++;});
+    sections.forEach(function(s){
+      var any=s.querySelectorAll('.card:not(.hide),.tier:not(.hide)').length>0;
+      s.classList.toggle('hide',!any);
+    });
+    empty.style.display=n?'none':'block';
+    hint.textContent=n+(n===1?' card matches':' cards match');
+  }
+  q.addEventListener('input',run);
+  q.addEventListener('keydown',function(e){if(e.key==='Escape'){q.value='';run();}});
+})();
+</script>
+</body>
+</html>
