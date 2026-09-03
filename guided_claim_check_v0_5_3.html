@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guided claim check — Codebook v0.5.3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F7F4;--card:#FFFFFF;--ink:#16202B;--ink-2:#4A5866;--ink-3:#7E8A95;
+  --rule:#DCDED7;--rule-2:#C3C7BE;
+  --go:#0F6E56;--go-bg:#E4F0EB;--log:#8A5A2B;--log-bg:#F6EEE3;--stop:#8C2F2F;--stop-bg:#F7E9E9;
+}
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:800px;margin:0 auto;padding:36px 24px 100px}
+h1{font-family:"IBM Plex Serif",Georgia,serif;font-size:24px;font-weight:500;margin:0 0 4px}
+.ver{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-3);margin-bottom:6px}
+.lede{color:var(--ink-2);font-size:14.5px;max-width:64ch;margin:0 0 26px}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:18px 20px;margin-bottom:12px}
+.card.dim{opacity:.45}
+.q{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+h2{font-size:15.5px;font-weight:600;margin:0 0 6px}
+.help{font-size:13.5px;color:var(--ink-2);margin:0 0 12px}
+textarea{width:100%;min-height:88px;padding:11px 13px;font:400 14px/1.6 "IBM Plex Serif",Georgia,serif;color:var(--ink);background:var(--paper);border:1px solid var(--rule-2);border-radius:3px;resize:vertical}
+textarea:focus,input:focus,button:focus-visible{outline:2px solid var(--go);outline-offset:1px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+button.opt{font:400 13.5px "IBM Plex Sans",sans-serif;padding:8px 14px;background:var(--card);color:var(--ink);border:1px solid var(--rule-2);border-radius:3px;cursor:pointer;text-align:left}
+button.opt:hover{border-color:var(--ink-3)}
+button.opt[aria-pressed=true]{background:var(--go-bg);border-color:var(--go);color:var(--go);font-weight:500}
+.groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:7px}
+button.grp{font:400 13px "IBM Plex Sans",sans-serif;padding:9px 12px;background:var(--card);border:1px solid var(--rule-2);border-radius:3px;cursor:pointer;text-align:left;color:var(--ink)}
+button.grp[aria-pressed=true]{background:var(--go-bg);border-color:var(--go)}
+button.grp span{display:block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-3);margin-top:2px}
+button.grp[aria-pressed=true] span{color:var(--go)}
+.verdict{border-radius:4px;padding:18px 20px;margin-bottom:12px;border:1px solid}
+.verdict.go{background:var(--go-bg);border-color:var(--go)}
+.verdict.log{background:var(--log-bg);border-color:var(--log)}
+.verdict.stop{background:var(--stop-bg);border-color:var(--stop)}
+.verdict h2{font-family:"IBM Plex Serif",Georgia,serif;font-size:19px;font-weight:500;margin:0 0 4px}
+.verdict.go h2{color:var(--go)} .verdict.log h2{color:var(--log)} .verdict.stop h2{color:var(--stop)}
+.verdict p{margin:0 0 8px;font-size:14px;color:var(--ink-2)}
+.verdict p:last-child{margin-bottom:0}
+.fired{margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,.08);font-size:12.5px;color:var(--ink-2)}
+.fired b{font-weight:600}
+code,.mono{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+code{background:#EEF0EA;padding:1px 4px;border-radius:2px}
+pre{background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:12px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.7;margin:0 0 10px;white-space:pre-wrap;word-break:break-word}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button.act{font:500 13px "IBM Plex Sans",sans-serif;padding:8px 15px;background:var(--ink);color:#fff;border:none;border-radius:3px;cursor:pointer}
+button.act.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule-2);font-weight:400}
+.err{color:var(--stop);font-size:13px;margin:8px 0 0}
+.hidden{display:none}
+.warnline{font-size:13px;color:var(--log);margin-top:8px}
+footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--ink-3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Guided claim check</h1>
+<div class="ver">codebook v0.5.3 · deterministic · no model involved</div>
+<p class="lede">Paste a passage and answer the Rule 0 questions. This tool computes the disposition from your answers — it does not read or judge the text, so it does not affect the independence of your coding.</p><p class="lede" style="margin-top:-14px">Use it during Pass 1, when you are deciding what to highlight. Routing and filling come after, once extraction is agreed.</p>
+
+<div class="card">
+  <div class="q">Passage</div>
+  <h2>What are you checking</h2>
+  <p class="help">Paste the passage exactly as published. Used only to build your record skeleton — it stays in this browser.</p>
+  <textarea id="txt" placeholder="Paste the passage here"></textarea>
+  <div class="row" style="margin-top:10px">
+    <input id="loc" type="text" placeholder="Locator, e.g. §2.4" style="flex:1;min-width:140px;padding:9px 12px;font:400 13.5px 'IBM Plex Mono',monospace;background:var(--paper);border:1px solid var(--rule-2);border-radius:3px;color:var(--ink)">
+    <input id="rid" type="text" placeholder="Record id, e.g. OAI-FGF-026" style="flex:1;min-width:160px;padding:9px 12px;font:400 13.5px 'IBM Plex Mono',monospace;background:var(--paper);border:1px solid var(--rule-2);border-radius:3px;color:var(--ink)">
+  </div>
+</div>
+
+<div class="card" id="c1">
+  <div class="q">Question 1 · scope test</div>
+  <h2>What family does this passage belong to?</h2>
+  <p class="help">Decide by what the passage is about, not by whether it feels important.</p>
+  <div class="opts" id="q1">
+    <button class="opt" data-v="family">One of the nine in-scope families</button>
+    <button class="opt" data-v="infra">Framework-wide infrastructure</button>
+    <button class="opt" data-v="hazard_out">A non-CBRN hazard only</button>
+  </div>
+</div>
+
+<div class="card hidden" id="c1b">
+  <div class="q">Question 1a · always-on or switched-on</div>
+  <h2>Always-on, or switched-on?</h2>
+  <p class="help">Ask what the document says, not why the measure exists. Always-on means it applies to every model all the time. Switched-on means the text ties it to a stated line, e.g. "for High capability models". The line need not name a hazard — a capability level counts.</p>
+  <div class="opts" id="q1b">
+    <button class="opt" data-v="new">Switched-on — and that line is not yet coded</button>
+    <button class="opt" data-v="existing">Switched-on — that line is already a coded record</button>
+    <button class="opt" data-v="none">Always-on — applies regardless of capability</button>
+  </div>
+</div>
+
+<div class="card hidden" id="c1c">
+  <div class="q">Question 1b · consequence citation</div>
+  <h2>Does it cite C, B, R, or N content as a downstream consequence?</h2>
+  <p class="help">For example, an AI R&amp;D threshold citing accelerated CBRN weapons development.</p>
+  <div class="opts" id="q1c">
+    <button class="opt" data-v="yes">Yes</button>
+    <button class="opt" data-v="no">No — the hazard scope is entirely non-CBRN</button>
+  </div>
+</div>
+
+<div class="card hidden" id="c2">
+  <div class="q">Question 2 · is there a fact of the matter</div>
+  <h2>Is there something here that either happened or didn’t?</h2>
+  <p class="help">Not "is it true" and not "could it be argued" — is there a fact of the matter. It names an action, condition, threshold, actor, process, or trigger. Mission statements and undefined abstractions do not. This is about the whole passage; whether a condition is specific enough to be a <em>threshold</em> is Rule 3, and only comes up if you route to that group.</p>
+  <div class="opts" id="q2">
+    <button class="opt" data-v="yes">Yes</button>
+    <button class="opt" data-v="no">No</button>
+  </div>
+</div>
+
+<div class="card hidden" id="c3">
+  <div class="q">Question 3 · restatement</div>
+  <h2>Have you already coded this assertion in this document?</h2>
+  <p class="help">Core gates often restate three to five times. Same assertion with no field value changing means no new record.</p>
+  <div class="opts" id="q3">
+    <button class="opt" data-v="new">No — first time</button>
+    <button class="opt" data-v="same">Yes, and no field value would differ</button>
+    <button class="opt" data-v="differs">Yes, but at least one field value differs</button>
+  </div>
+</div>
+
+<div class="card hidden" id="c4">
+  <div class="q">Question 4 · field mapping</div>
+  <h2>Which conditional groups can you populate?</h2>
+  <p class="help">Select every group the passage supports. Most claims support one, some support two. If you select none, this is a field-gap log entry.</p>
+  <p class="help">There are nine in-scope families but eight groups. Framework versioning and revision has no group of its own: a commitment to update or revise the framework codes under <b>Decision point</b> as <code>framework_revision</code>. The five <code>version.*</code> fields are document-level and are never populated from a claim.</p>
+  <div class="groups" id="q4">
+    <button class="grp" data-v="hazard">Hazard<span>hazard.*</span></button>
+    <button class="grp" data-v="threshold">Threshold<span>threshold.*</span></button>
+    <button class="grp" data-v="decision">Decision point<span>decision_point · incl. framework_revision</span></button>
+    <button class="grp" data-v="backing">Accountability<span>backing_mechanism.* · separation_of_duties</span></button>
+    <button class="grp" data-v="override">Override route<span>override_waiver_route</span></button>
+    <button class="grp" data-v="external">External input<span>external_basis</span></button>
+    <button class="grp" data-v="third">Third-party evaluation<span>external_evals · named_evaluators</span></button>
+    <button class="grp" data-v="evaluation">Evaluation and reporting<span>re-evaluation triggers · publication commitments</span></button>
+  </div>
+  <p class="warnline hidden" id="splitwarn">Two or more groups selected. If the fields diverge on claim type, hazard, decision point, or backing, this is a split — code two records.</p>
+  <div class="hidden" id="docfact" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--rule)">
+    <div class="q">Question 5 · document fact check</div>
+    <h2>Is the only content a read-off document property?</h2>
+    <p class="help">A named multilateral commitment, a version property, or an evaluator access term — something no claim in the document asserts. Publication commitments are NOT in this category: "we will publish summaries of these assessments" is a Measure 10.2 commitment and belongs in the evaluation group above.</p>
+    <div class="opts" id="q5">
+      <button class="opt" data-v="yes">Yes — a read-off document property</button>
+      <button class="opt" data-v="no">No — it states something else entirely</button>
+    </div>
+  </div>
+  <div class="row" style="margin-top:14px">
+    <button class="act" id="run">Compute disposition</button>
+    <button class="act ghost" id="reset">Start over</button>
+  </div>
+  <p class="err hidden" id="err">Answer the questions above first.</p>
+</div>
+
+<div id="out"></div>
+
+<footer>The workbook is canonical. This tool restates codebook v0.5.0 and should be regenerated whenever the version increments. Nothing you type is sent anywhere.</footer>
+</div>
+
+<script>
+(function(){
+  var A={q1:null,q1b:null,q1c:null,q2:null,q3:null,q4:[],q5:null};
+  function show(id,on){document.getElementById(id).classList.toggle('hidden',!on);}
+  function single(wrap,key,after){
+    document.querySelectorAll('#'+wrap+' .opt').forEach(function(b){
+      b.addEventListener('click',function(){
+        document.querySelectorAll('#'+wrap+' .opt').forEach(function(x){x.setAttribute('aria-pressed','false')});
+        b.setAttribute('aria-pressed','true');A[key]=b.getAttribute('data-v');after&&after();
+        document.getElementById('out').innerHTML='';document.getElementById('err').classList.add('hidden');
+      });
+    });
+  }
+  function step1(){
+    var v=A.q1;
+    show('c1b',v==='infra');show('c1c',v==='hazard_out');
+    if(v==='family'){show('c2',true);}
+    else if(v==='infra'){show('c2',A.q1b==='new'||A.q1b==='existing');}
+    else if(v==='hazard_out'){show('c2',A.q1c==='yes');}
+    gate();
+  }
+  function gate(){
+    var inScope=(A.q1==='family')||(A.q1==='infra'&&(A.q1b==='new'||A.q1b==='existing'))||(A.q1==='hazard_out'&&A.q1c==='yes');
+    show('c3',inScope&&A.q2==='yes');
+    show('c4',inScope&&A.q2==='yes'&&(A.q3==='new'||A.q3==='differs'));
+  }
+  single('q1','q1',step1);single('q1b','q1b',step1);single('q1c','q1c',step1);
+  single('q2','q2',gate);single('q3','q3',gate);single('q5','q5',null);
+  document.querySelectorAll('#q4 .grp').forEach(function(b){
+    b.addEventListener('click',function(){
+      var v=b.getAttribute('data-v'),i=A.q4.indexOf(v);
+      if(i>-1){A.q4.splice(i,1);b.setAttribute('aria-pressed','false');}
+      else{A.q4.push(v);b.setAttribute('aria-pressed','true');}
+      document.getElementById('splitwarn').classList.toggle('hidden',A.q4.length<2);
+      document.getElementById('docfact').classList.toggle('hidden',A.q4.length!==0);
+      document.getElementById('out').innerHTML='';
+    });
+  });
+  var GF={hazard:['hazard.label_as_stated','hazard.hazards_enumerated','hazard.bio_specific_substance','hazard.lifecycle_stages_addressed'],
+    threshold:['threshold.present','threshold.trigger_verbatim','threshold.response_verbatim','threshold.response_linked','threshold.trigger_type'],
+    decision:['decision_point'],
+    backing:['backing_mechanism.oversight','backing_mechanism.ownership','backing_mechanism.support_and_monitoring','backing_mechanism.assurance','backing_mechanism.body_named_verbatim','separation_of_duties'],
+    override:['override_waiver_route'],external:['external_basis'],
+    third:['third_party.external_evals','third_party.named_evaluators'],
+    evaluation:['evaluation.reevaluation_trigger_stated','evaluation.results_published','evaluation.model_card_reported']};
+  var ALWAYS=['record_id','claim_text_verbatim','claim_type','source_locator','coder_notes'];
+
+  function esc(s){return (s||'').replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c]});}
+  function verdict(kind,title,body,fired){
+    return '<div class="verdict '+kind+'"><h2>'+title+'</h2>'+body+
+      (fired?'<div class="fired"><b>Rules applied:</b> '+fired+'</div>':'')+'</div>';
+  }
+  document.getElementById('run').addEventListener('click',function(){
+    var out=document.getElementById('out'),err=document.getElementById('err');
+    var inScope=(A.q1==='family')||(A.q1==='infra'&&(A.q1b==='new'||A.q1b==='existing'))||(A.q1==='hazard_out'&&A.q1c==='yes');
+    if(!A.q1||!A.q2||(inScope&&A.q2==='yes'&&!A.q3)){err.classList.remove('hidden');out.innerHTML='';return;}
+    err.classList.add('hidden');
+    var txt=document.getElementById('txt').value.trim();
+    var loc=document.getElementById('loc').value.trim()||'[locator]';
+    var rid=document.getElementById('rid').value.trim()||'[record_id]';
+    var html='';
+
+    if(A.q1==='infra'&&A.q1b==='none'){
+      out.innerHTML=verdict('stop','Skip — out of scope','<p>Always-on infrastructure. It applies identically to every hazard, so it carries no signal about whether biological risk is treated differently — which is the research question.</p><p>Do not log it. Skipping is the correct outcome, not a gap.</p>','Rule 0 scope test');return;}
+    if(A.q1==='hazard_out'&&A.q1c==='no'){
+      out.innerHTML=verdict('stop','Skip — out of scope','<p>Hazard scope is entirely non-CBRN. The hazard vocabulary cannot represent it, by design.</p><p>Log it in the dropped log only if you want the corpus record; no field-gap entry is needed.</p>','Rule 0 hazard universe');return;}
+    if(A.q2==='no'){
+      out.innerHTML=verdict('stop','Not a claim','<p>Nothing here either happened or didn’t. Mission statements, undefined abstractions, recital framing, and definitions without an attached obligation are not claims.</p><p>Skip without logging a hesitation.</p>','Rule 0 extraction test (a)');return;}
+    if(A.q3==='same'){
+      out.innerHTML=verdict('log','No new record — append the locator','<p>A restatement with no field value changing does not create a record. Add <code>'+esc(loc)+'</code> to the existing record\'s locator list in <code>coder_notes</code>, and keep the most complete statement as canonical.</p>','Rule 0 deduplication');return;}
+    if(A.q4.length===0){
+      if(A.q5==='yes'){
+        var bd='<p>Not a claim record. Record the fact on the <b>Document facts</b> sheet — one row per framework — and preserve the passage in <code>evidence_locator</code> and <code>evidence_verbatim</code>.</p>'+
+        '<p>Record the passage so the finding is supported by text rather than by an empty cell. If you are looking at a publication commitment, stop — that is a claim in the evaluation group, not a document property.</p>'+
+        '<pre id="p0">'+esc(loc||'[locator]')+'\t'+esc(txt||'[verbatim]')+'</pre>'+
+        '<div class="row"><button class="act" onclick="copyBox(\'p0\')">Copy locator and verbatim</button></div>';
+        out.innerHTML=verdict('log','Document property — not a claim record',bd,'Rule 0(b) unamended · v0.5.3 disposition');return;}
+      if(A.q5===null){err.classList.remove('hidden');out.innerHTML='';return;}
+      var b='<p>In scope and falsifiable, but no conditional field can be populated and it is not a document fact. This is a field-gap log entry, not a record.</p><p>Do not force a fit. If the same gap recurs across several frameworks, it becomes a candidate for a schema change.</p>';
+      out.innerHTML=verdict('log','Field-gap log entry',b,'Rule 0 extraction test (b) · disposition 2');return;}
+
+    var fields=[];A.q4.forEach(function(g){fields=fields.concat(GF[g])});
+    var fired=['Rule 0 scope test','Rule 0 extraction test'];
+    if(A.q1==='infra')fired.push('Rule 0 infrastructure exception (switched-on)');
+    if(A.q1==='hazard_out')fired.push('Rule 0 consequence citation');
+    if(A.q3==='differs')fired.push('Rule 0 deduplication — differing values');
+    if(A.q4.indexOf('hazard')>-1)fired.push('Rule 1 substitution test');
+    if(A.q4.indexOf('threshold')>-1)fired.push('Rules 3 and 3a');
+    if(A.q4.indexOf('external')>-1||A.q4.indexOf('third')>-1)fired.push('Rule 8 routing');
+    if(A.q4.length>1)fired.push('Rule 0 split check');
+
+    var notes=[];
+    if(A.q1==='infra'&&A.q1b==='existing')notes.push('Infrastructure conditioned on an already-coded trigger — consider appending to that record as response content instead of a new record (Rule 0 exception).');
+    if(A.q1==='hazard_out')notes.push('CBRN cited as downstream consequence of a non-CBRN capability; indirect framing noted (v0.5.0).');
+    if(A.q3==='differs')notes.push('Restates an earlier passage but at least one field value differs — coded as a separate record.');
+    if(A.q4.length>1)notes.push('Check for a split: if claim type, hazard, decision point, or backing diverge across the selected groups, code two records.');
+    if(A.q4.indexOf('threshold')>-1)notes.push('If no response is attached in this section, code response_linked = no and response_verbatim = not_applicable; cross-reference the responding record.');
+
+    var body='<p>Code it. Fill the 18 document-level fields already set for this framework, the five always-coded fields, and the groups below.</p>'+
+      '<p class="mono" style="color:var(--ink)">'+fields.length+' conditional fields across '+A.q4.length+' group'+(A.q4.length>1?'s':'')+'</p>';
+    html+=verdict('go','Make a record',body,fired.join(' · '));
+
+    var row=ALWAYS.concat(fields);
+    var vals=[rid,txt||'[verbatim]','[claim_type]',loc,notes.length?notes.join(' '):''];
+    fields.forEach(function(){vals.push('')});
+    html+='<div class="card"><div class="q">Paste-ready</div><h2>Row skeleton</h2>'+
+      '<p class="help">Field names and your values, tab separated. Paste into a scratch row, or use it as a checklist against the template.</p>'+
+      '<pre id="p1">'+esc(row.join('\t'))+'\n'+esc(vals.join('\t'))+'</pre>'+
+      '<div class="row"><button class="act" onclick="copyBox(\'p1\')">Copy row</button>'+
+      (notes.length?'<button class="act ghost" onclick="copyBox(\'p2\')">Copy notes only</button>':'')+'</div>'+
+      (notes.length?'<pre id="p2" style="margin-top:10px">'+esc(notes.join(' '))+'</pre>':'')+'</div>';
+
+    var unfilled=['Every conditional group you did not select takes not_applicable — blank means only \u2018not yet coded\u2019',
+      'The hazard group takes not_hazard_specific plus not_applicable if the claim names no hazard',
+      'The four Measure 3.5 access terms are document properties — record them on the Document facts sheet with evidence_locator and evidence_verbatim, not here'];
+    html+='<div class="card"><div class="q">Before you move on</div><h2>Groups you did not select</h2>'+
+      '<p class="help">Blank means not yet coded. Every unselected group still needs its scope value:</p><ul style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-2)"><li>'+unfilled.join('</li><li>')+'</li></ul>'+
+      '<p class="help" style="margin:10px 0 0">Absence within a selected group follows Rule 6: affirmative negation is <code>none_stated</code> or <code>no_route_stated</code>; silence is <code>not_publicly_specified</code>.</p></div>';
+    out.innerHTML=html;
+    out.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+  document.getElementById('reset').addEventListener('click',function(){
+    A={q1:null,q1b:null,q1c:null,q2:null,q3:null,q4:[],q5:null};
+    document.querySelectorAll('.opt,.grp').forEach(function(b){b.setAttribute('aria-pressed','false')});
+    ['c1b','c1c','c2','c3','c4','docfact'].forEach(function(i){show(i,false)});
+    document.getElementById('splitwarn').classList.add('hidden');
+    document.getElementById('out').innerHTML='';document.getElementById('err').classList.add('hidden');
+    document.getElementById('txt').value='';document.getElementById('loc').value='';document.getElementById('rid').value='';
+  });
+  window.copyBox=function(id){
+    var t=document.getElementById(id).textContent;
+    navigator.clipboard&&navigator.clipboard.writeText(t);
+  };
+})();
+</script>
+</body>
+</html>
