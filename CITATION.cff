@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this dataset or crosswalk, please cite it as below."
+title: "Frontier AI-C(B)RN Commitments Observatory"
+type: dataset
+authors:
+  - family-names: Smith
+    given-names: Miranda
+version: "0.7.6"
+date-released: "2026-09-25"
+url: "https://mirandas88.github.io/CBRN-Observatory/"
+repository-code: "https://github.com/MirandaS88/CBRN-Observatory"
+license: CC-BY-4.0
+abstract: >-
+  A claim-level public record of frontier AI companies' commitments on chemical, biological,
+  radiological and nuclear risk, with a focus on biology. Twelve published safety frameworks
+  from ten companies are coded to one codebook and read against the EU General-Purpose AI
+  Code of Practice, Safety and Security chapter.
+keywords:
+  - biosecurity
+  - frontier AI
+  - AI safety frameworks
+  - CBRN
+  - EU AI Act
+  - Code of Practice
